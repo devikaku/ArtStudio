@@ -1,0 +1,49 @@
+{
+	"Themes": [
+		{
+			"name": "default",
+			"image": "wood.jpeg",
+			"bgColorHex": "#f2d59b",
+			"buttonColorHex": "#a5e4ff",
+			"textColorHex": "#000000",
+			"buttonTextColorHex": "#ffffff",
+			"secondaryColorHex": "#fed8ff"
+		},
+		{
+			"name": "cactus",
+			"image": "cactus.png",
+			"bgColorHex": "#E5BDC7",
+			"buttonColorHex": "#3B603F",
+			"textColorHex": "#283A38",
+			"buttonTextColorHex": "#ffffff",
+			"secondaryColorHex": "#D79081"
+		},
+		{
+			"name": "sunset",
+			"image": "sunset.png",
+			"bgColorHex": "#D9674F",
+			"buttonColorHex": "#FC9E68",
+			"textColorHex": "#6B6167",
+			"buttonTextColorHex": "#ffffff",
+			"secondaryColorHex": "#F4C580"
+		},
+		{
+			"name": "blueflower",
+			"image": "blueflower.jpg",
+			"bgColorHex": "#80AFDA",
+			"buttonColorHex": "#B6B9D6",
+			"textColorHex": "#ffffff",
+			"buttonTextColorHex": "#ffffff",
+			"secondaryColorHex": "#2A3954"
+		},
+				{
+			"name": "mountain",
+			"image": "mountain.jpg",
+			"bgColorHex": "#C280A4",
+			"buttonColorHex": "#F2CAC2",
+			"textColorHex": "#ffffff",
+			"buttonTextColorHex": "#000000",
+			"secondaryColorHex": "#C9BFD6"
+		}
+	]
+}
