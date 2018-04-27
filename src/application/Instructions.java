@@ -124,6 +124,9 @@ public class Instructions {
 		l.setText((pm.rb).getString("instructions"));
 		t.setText((pm.rb).getString("instructionstext"));
 		back.setText((pm.rb).getString("backtopaint"));
+		l.setAccessibleText((pm.rb).getString("labelinstructions"));
+		t.setAccessibleText((pm.rb).getString("instructionstext"));
+		back.setAccessibleText((pm.rb).getString("buttonbacktopaint"));
 		
 		setComponentThemeStyle();
 		

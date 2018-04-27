@@ -5,7 +5,10 @@ import Controllers.ThemeController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -59,6 +62,7 @@ public class Login {
 	//add log in buttons, such as fields for username, password, and back to home
 	private void loadView() {
 		l = new Label("Log In");
+
 		l.setAccessibleHelp("label");
 		GridPane g = new GridPane();
 		u = new Label("Username: ");
@@ -66,9 +70,11 @@ public class Login {
 		p = new Label("Password: ");
 
 		username = new TextField();
+		
 
 		
 		password = new PasswordField();
+		
 
 		
 		g.add(u, 0, 0);
@@ -87,7 +93,9 @@ public class Login {
 				}
 				pm.launchPaint();
 			}else {
-				error.setText(((pm.rb).getString("loginerror")));
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("loginerror"), ButtonType.CLOSE);
+				alert.setTitle((pm.rb).getString("login"));
+				alert.showAndWait();
 			}
 		});
 
@@ -137,6 +145,11 @@ public class Login {
 
 		go.setText((pm.rb).getString("login"));
 		back.setText((pm.rb).getString("backtomenu"));
+		username.setAccessibleText((pm.rb).getString("textfieldusername"));
+		password.setAccessibleText((pm.rb).getString("textfieldpassword"));
+		l.setAccessibleText((pm.rb).getString("labellogin"));
+		go.setAccessibleText((pm.rb).getString("buttongo"));
+		back.setAccessibleText((pm.rb).getString("buttonbacktohome"));
 		setComponentThemeStyle();
 		
 	}
@@ -162,13 +175,13 @@ public class Login {
 		p.setFont(Font.font ("Courier", 15));
 		
 		username.setAccessibleHelp("username");
-		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ ";");
+		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ ";" + "-fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		username.setMaxHeight(40);
 		username.setMaxWidth(300);
 		username.setFont(Font.font ("Courier", 15));
 		
 		password.setAccessibleHelp("password");
-		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex() + ";");
+		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex() + ";"+ "-fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		password.setMaxHeight(40);
 		password.setMaxWidth(300);
 		password.setFont(Font.font ("Courier", 15));

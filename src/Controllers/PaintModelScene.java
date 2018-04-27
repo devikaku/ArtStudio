@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 import model.User;
 
 public class PaintModelScene extends Application{
-	private Stage primaryStage;
+	public Stage primaryStage;
 	private PaintingScene p;
 	private HomePage hp;
 	private Login li;

@@ -18,6 +18,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -47,13 +48,12 @@ public class HomePage {
 		loadView();
 		 Image image1 = new Image(tc.getCurrent().getImage());
 
-		    BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
+		    BackgroundSize bSize = new BackgroundSize(pm.primaryStage.getWidth()+1000, pm.primaryStage.getHeight()+1000, false, false, false, true);
 
 
-		    b.setAccessibleHelp("background");
 		    b.setBackground(new Background(new BackgroundImage(image1,
-		            BackgroundRepeat.REPEAT,
-		            BackgroundRepeat.REPEAT,
+		            BackgroundRepeat.NO_REPEAT,
+		            BackgroundRepeat.NO_REPEAT,
 		            BackgroundPosition.CENTER,
 		            bSize)));
 		scene = new Scene(b, 500, 300, Color.CORNSILK);
@@ -61,8 +61,9 @@ public class HomePage {
 	private void loadView() {
 		//load homepage view with localization language change, and login and signup options
 		l = new Label((pm.rb).getString("artstudio"));
+		
 		li = new Button((pm.rb).getString("login"));
-		li.setAccessibleHelp("button");
+		
 		li.setOnAction(e->{
 			pm.setCurrentUser(null);
 			pm.setLoggedIn(false);
@@ -75,14 +76,16 @@ public class HomePage {
 			pm.launchSignup();
 		});
 		
+		
 		english = new Button((pm.rb).getString("english"));
-		english.setAccessibleHelp("button");
+		
 		english.setOnAction(e->{
 			System.out.println("here");
 			pm.setLanguage("english");
 			pm.resetLanguageComponents();
 		});
 		spanish = new Button((pm.rb).getString("spanish"));
+		
 		spanish.setAccessibleHelp("button");
 		spanish.setOnAction(e->{
 			System.out.println("hereo");
@@ -95,7 +98,10 @@ public class HomePage {
 			pm.tc.setRandomTheme();
 			pm.resetTheme();
 		});
-		VBox v = new VBox(l, li, su, english, spanish, gen);
+		HBox h = new HBox(english, spanish);
+		h.setAlignment(Pos.CENTER);
+		h.setSpacing(5);
+		VBox v = new VBox(l, li, su, h, gen);
 		v.setSpacing(5);
 		b.setCenter(v);
         b.setPadding(new Insets(10,50,50,50));
@@ -111,6 +117,12 @@ public class HomePage {
 		
 		english.setText((pm.rb).getString("english"));
 		spanish.setText((pm.rb).getString("spanish"));
+		gen.setAccessibleText((pm.rb).getString("buttonthemechange"));
+		l.setAccessibleText((pm.rb).getString("labelartstudio"));
+		li.setAccessibleText((pm.rb).getString("buttonlogin"));
+		su.setAccessibleText((pm.rb).getString("buttonsignup"));
+		english.setAccessibleText((pm.rb).getString("buttonenglish"));
+		spanish.setAccessibleText((pm.rb).getString("buttonspanish"));
 		setComponentThemeStyle();
 		
 	}
@@ -139,6 +151,18 @@ public class HomePage {
         li.setMaxWidth(300);
         li.setFont(Font.font ("Courier", 15));
 		li.setTextFill(tc.getCurrent().getColor("btntxt"));
+		
+        english.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
+        english.setMaxHeight(40);
+        english.setMaxWidth(150);
+        english.setFont(Font.font ("Courier", 10));
+		english.setTextFill(tc.getCurrent().getColor("btntxt"));
+		
+        spanish.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
+        spanish.setMaxHeight(40);
+        spanish.setMaxWidth(150);
+        spanish.setFont(Font.font ("Courier", 10));
+		spanish.setTextFill(tc.getCurrent().getColor("btntxt"));
 		
 		l.setFont(Font.font ("Courier", 40));
 		l.setTextFill(tc.getCurrent().getColor("txt"));

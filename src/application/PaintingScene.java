@@ -55,6 +55,7 @@ public class PaintingScene {
 	private ThemeController tc;
 	Label l;
 	Label l2;
+	 Label cbb;
 	Slider slider;
 	Label l5;
 	Button erase;
@@ -127,9 +128,9 @@ public class PaintingScene {
         stamp.setOnAction(e->{
         	tool.setTool("stamp");
         });
-        Label cbb = new Label("Stamps:");
+        cbb = new Label("Stamps:");
         ComboBox cb = new ComboBox();
-        cb.getItems().addAll("flower", "circle", "square", "animal");
+        cb.getItems().addAll("circle", "square", "line");
 		v.getChildren().addAll(l, color, l2, slider, l5, erase, paint, pencil, stamp, cbb, cb);
 		v.setSpacing(5);
 		b.setLeft(v);
@@ -219,6 +220,7 @@ public class PaintingScene {
 			setLabelStyle(l);
 			setLabelStyle(l2);
 			setLabelStyle(l5);
+			setLabelStyle(cbb);
 	}
 	public void setButtonStyle(Button b) {
 		b.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
@@ -246,10 +248,24 @@ public class PaintingScene {
 		paint.setText((pm.rb).getString("paintbrush"));
 		pencil.setText((pm.rb).getString("marker"));
 		stamp.setText((pm.rb).getString("stamp"));
+		 cbb.setText((pm.rb).getString("stamp")+"s");
 		by.setText((pm.rb).getString("logout"));
 		c.setText((pm.rb).getString("settings"));
 		d.setText((pm.rb).getString("pastprojects"));
 		e.setText((pm.rb).getString("instructions"));
+		
+		l.setAccessibleText((pm.rb).getString("currentcolor"));
+		l2.setAccessibleText((pm.rb).getString("toolsize"));
+		l5.setAccessibleText((pm.rb).getString("tool"));
+		erase.setAccessibleText((pm.rb).getString("eraser"));
+		paint.setAccessibleText((pm.rb).getString("paintbrush"));
+		pencil.setAccessibleText((pm.rb).getString("marker"));
+		stamp.setAccessibleText((pm.rb).getString("stamp"));
+		by.setAccessibleText((pm.rb).getString("logout"));
+		c.setAccessibleText((pm.rb).getString("settings"));
+		d.setAccessibleText((pm.rb).getString("pastprojects"));
+		e.setAccessibleText((pm.rb).getString("instructions"));
+		cbb.setAccessibleText((pm.rb).getString("stamp")+"s");
 	}
 	 
 

@@ -11,11 +11,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -24,6 +27,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -47,7 +51,8 @@ public class Settings {
 	Button back;
 	ThemeController tc;
 	ComboBox<String> themes;
-	
+	Button english;
+	Button spanish;
 	/**
 	 * @param currentUser
 	 * @param pm
@@ -89,6 +94,23 @@ public class Settings {
 	            pm.resetTheme();
 	        }    
 	    });
+		english = new Button((pm.rb).getString("english"));
+		english.setAccessibleHelp("button");
+		english.setOnAction(e->{
+			System.out.println("here");
+			pm.setLanguage("english");
+			pm.resetLanguageComponents();
+		});
+		spanish = new Button((pm.rb).getString("spanish"));
+		spanish.setAccessibleHelp("button");
+		spanish.setOnAction(e->{
+			System.out.println("hereo");
+			pm.setLanguage("spanish");
+			pm.resetLanguageComponents();
+		});
+		HBox h = new HBox(english, spanish);
+		h.setAlignment(Pos.CENTER);
+		h.setSpacing(5);
 		
 		g.add(u, 0, 0);
 		g.add(username, 1, 0);
@@ -105,9 +127,13 @@ public class Settings {
 		go.setOnAction(e->{
 			//check if valid
 			if(pm.EditUser(username.getText(), password.getText(), rpassword.getText())) {
-				error.setText(((pm.rb).getString("settingssaved")));
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("settingssaved"), ButtonType.CLOSE);
+				alert.setTitle((pm.rb).getString("settings"));
+				alert.showAndWait();
 			}else {
-				error.setText(((pm.rb).getString("settingsnotsaved")));
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("settingsnotsaved"), ButtonType.CLOSE);
+				alert.setTitle((pm.rb).getString("settings"));
+				alert.showAndWait();
 			}
 		});
 		back = new Button("Back to Paint");
@@ -116,7 +142,7 @@ public class Settings {
 		});
 		back.setCenterShape(true);
 		VBox v = new VBox();
-		v.getChildren().addAll(l, g, error, go, back);
+		v.getChildren().addAll(l, g, h, go, back);
 		b.setCenter(v);
         b.setPadding(new Insets(10,50,50,50));
         v.setPadding(new Insets(20,20,20,30));
@@ -174,22 +200,32 @@ public class Settings {
 		rp.setTextFill(tc.getCurrent().getColor("btntxt"));
 		rp.setFont(Font.font ("Courier", 10));
 		
+        english.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
+        english.setMaxHeight(40);
+        english.setMaxWidth(150);
+        english.setFont(Font.font ("Courier", 10));
+		english.setTextFill(tc.getCurrent().getColor("btntxt"));
 		
+        spanish.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
+        spanish.setMaxHeight(40);
+        spanish.setMaxWidth(150);
+        spanish.setFont(Font.font ("Courier", 10));
+		spanish.setTextFill(tc.getCurrent().getColor("btntxt"));
 		
 		username.setAccessibleHelp("username");
-		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex());
+		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		username.setMaxHeight(40);
 		username.setMaxWidth(300);
 		username.setFont(Font.font ("Courier", 15));
 		
 		password.setAccessibleHelp("password");
-		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex());
+		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		password.setMaxHeight(40);
 		password.setMaxWidth(300);
 		password.setFont(Font.font ("Courier", 15));
 		
 		rpassword.setAccessibleHelp("password");
-		rpassword.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex());
+		rpassword.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		rpassword.setMaxHeight(40);
 		rpassword.setMaxWidth(300);
 		rpassword.setFont(Font.font ("Courier", 15));
@@ -214,9 +250,23 @@ public class Settings {
 		p.setText((pm.rb).getString("changepassword"));
 		rp.setText((pm.rb).getString("repeatchangedpassword"));
 		ct.setText((pm.rb).getString("changetheme"));
+		english.setText((pm.rb).getString("english"));
+		spanish.setText((pm.rb).getString("spanish"));
 		
 		go.setText((pm.rb).getString("save"));
 		back.setText((pm.rb).getString("backtopaint"));
+		
+		
+		username.setAccessibleText((pm.rb).getString("textfieldcusername"));
+		password.setAccessibleText((pm.rb).getString("textfieldcpassword"));
+		rpassword.setAccessibleText((pm.rb).getString("textfieldcrpassword"));
+		l.setAccessibleText((pm.rb).getString("labelsettings"));
+		go.setAccessibleText((pm.rb).getString("buttonsave"));
+		back.setAccessibleText((pm.rb).getString("buttonbacktopaint"));
+		
+		ct.setAccessibleText((pm.rb).getString("buttonthemechange"));
+		english.setAccessibleText((pm.rb).getString("buttonenglish"));
+		spanish.setAccessibleText((pm.rb).getString("buttonspanish"));
 		setComponentThemeStyle();
 		
 	}

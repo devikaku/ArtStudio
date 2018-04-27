@@ -5,10 +5,13 @@ import Controllers.ThemeController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -84,7 +87,9 @@ public class Signup {
 				}
 				pm.launchPaint();
 			}else {
-				error.setText(((pm.rb).getString("signuperror")));
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("signuperror"), ButtonType.CLOSE);
+				alert.setTitle((pm.rb).getString("signup"));
+				alert.showAndWait();
 			}
 		});
 		back = new Button("Back to Home");
@@ -127,6 +132,15 @@ public class Signup {
 		
 		go.setText((pm.rb).getString("signup"));
 		back.setText((pm.rb).getString("backtomenu"));
+		
+		username.setAccessibleText((pm.rb).getString("textfieldusername"));
+		password.setAccessibleText((pm.rb).getString("textfieldpassword"));
+		rpassword.setAccessibleText((pm.rb).getString("textfieldrpassword"));
+		l.setAccessibleText((pm.rb).getString("labelsignup"));
+		go.setAccessibleText((pm.rb).getString("buttongo"));
+		back.setAccessibleText((pm.rb).getString("buttonbacktohome"));
+		
+		
 		setComponentThemeStyle();
 		
 	}
@@ -156,19 +170,19 @@ public class Signup {
 		
 		
 		username.setAccessibleHelp("username");
-		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex());
+		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		username.setMaxHeight(40);
 		username.setMaxWidth(300);
 		username.setFont(Font.font ("Courier", 15));
 		
 		password.setAccessibleHelp("password");
-		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex());
+		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		password.setMaxHeight(40);
 		password.setMaxWidth(300);
 		password.setFont(Font.font ("Courier", 15));
 		
-		rpassword.setAccessibleHelp("password");
-		rpassword.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex());
+		rpassword.setAccessibleHelp("repeat password");
+		rpassword.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
 		rpassword.setMaxHeight(40);
 		rpassword.setMaxWidth(300);
 		rpassword.setFont(Font.font ("Courier", 15));
