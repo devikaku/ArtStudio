@@ -20,7 +20,7 @@ import model.User;
 
 public class PaintModelScene extends Application{
 	public Stage primaryStage;
-	private PaintingScene p;
+	public PaintingScene p;
 	private HomePage hp;
 	private Login li;
 	private Signup su;

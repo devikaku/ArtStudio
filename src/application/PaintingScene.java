@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -24,10 +25,22 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+
 import Controllers.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -38,6 +51,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Tool;
 //main painting scene
@@ -146,7 +160,36 @@ public class PaintingScene {
 		c.setOnAction(e->{
 			pm.launchSettings();
 		});
-		d = new Button("Past Projects");
+		d = new Button("Save");
+		
+		//got inspiration for saving image here: http://java-buddy.blogspot.com/2013/04/save-canvas-to-png-file.html
+		d.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                FileChooser fileChooser = new FileChooser();
+                
+                //Set extension filter
+                FileChooser.ExtensionFilter extFilter = 
+                        new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+                fileChooser.getExtensionFilters().add(extFilter);
+              
+                //Show save file dialog
+                File file = fileChooser.showSaveDialog(pm.primaryStage);
+                
+                if(file != null){
+                    try {
+                        WritableImage writableImage = new WritableImage((int)canvas.getWidth(),(int)canvas.getHeight());
+                        canvas.snapshot(null, writableImage);
+                        RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                        ImageIO.write(renderedImage, "png", file);
+                    } catch (IOException ex) {
+                        Logger.getLogger(JavaFX_DrawOnCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            
+        });
 		e = new Button("Instructions");
 		e.setOnAction(e->{
 			pm.launchInstructions();
@@ -251,7 +294,7 @@ public class PaintingScene {
 		 cbb.setText((pm.rb).getString("stamp")+"s");
 		by.setText((pm.rb).getString("logout"));
 		c.setText((pm.rb).getString("settings"));
-		d.setText((pm.rb).getString("pastprojects"));
+		d.setText((pm.rb).getString("save"));
 		e.setText((pm.rb).getString("instructions"));
 		
 		l.setAccessibleText((pm.rb).getString("currentcolor"));
@@ -263,7 +306,7 @@ public class PaintingScene {
 		stamp.setAccessibleText((pm.rb).getString("stamp"));
 		by.setAccessibleText((pm.rb).getString("logout"));
 		c.setAccessibleText((pm.rb).getString("settings"));
-		d.setAccessibleText((pm.rb).getString("pastprojects"));
+		d.setAccessibleText((pm.rb).getString("save"));
 		e.setAccessibleText((pm.rb).getString("instructions"));
 		cbb.setAccessibleText((pm.rb).getString("stamp")+"s");
 	}
