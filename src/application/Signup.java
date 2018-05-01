@@ -11,8 +11,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -20,8 +22,10 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 //create new signup page with instance variables, accessibility, 
 public class Signup {
@@ -40,6 +44,7 @@ public class Signup {
 	Button go;
 	Button back;
 	ThemeController tc;
+	Rectangle r;
 	
 	/**
 	 * @param currentUser
@@ -53,6 +58,21 @@ public class Signup {
 		loadView();
 
 		scene = new Scene(b, 500, 300, Color.CORNSILK);
+		scene.setOnKeyPressed(e -> {
+		    if (e.getCode() == KeyCode.ENTER) {
+				String success = pm.SignUp(username.getText().toLowerCase(), password.getText(), rpassword.getText());
+				if((success.equals("success"))) {
+					if(pm.getP()!=null) {
+						pm.getP().reset();
+					}
+					pm.launchPaint();
+				}else {
+					Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
+					alert.setTitle((pm.rb).getString("signup"));
+					alert.showAndWait();
+				}
+		    }
+		});
 	}
 	//add log in buttons, such as fields for username, password, repeatpassword,and back to home
 	private void loadView() {
@@ -77,17 +97,20 @@ public class Signup {
 		g.add(rp, 0, 2);
 		g.add(rpassword, 1, 2);
 		g.setAlignment(Pos.CENTER);
+		g.setHgap(5);
+		g.setVgap(10);
 		
 		go = new Button("Sign up");
 		go.setOnAction(e->{
 			//check if valid
-			if(pm.SignUp(username.getText(), password.getText(), rpassword.getText())) {
+			String success = pm.SignUp(username.getText().toLowerCase(), password.getText(), rpassword.getText());
+			if((success.equals("success"))) {
 				if(pm.getP()!=null) {
 					pm.getP().reset();
 				}
 				pm.launchPaint();
 			}else {
-				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("signuperror"), ButtonType.CLOSE);
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
 				alert.setTitle((pm.rb).getString("signup"));
 				alert.showAndWait();
 			}
@@ -99,7 +122,12 @@ public class Signup {
 		back.setCenterShape(true);
 		VBox v = new VBox();
 		v.getChildren().addAll(l, g, error, go, back);
-		b.setCenter(v);
+		StackPane s = new StackPane();
+		r = new Rectangle(400, 250);
+		r.setFill(tc.getCurrent().getColor("bg"));
+		r.setOpacity(0.8);
+		s.getChildren().addAll(r, v);
+		b.setCenter(s);
         b.setPadding(new Insets(10,50,50,50));
         v.setPadding(new Insets(20,20,20,30));
         v.setAlignment(Pos.CENTER);
@@ -154,6 +182,7 @@ public class Signup {
 	            BackgroundRepeat.REPEAT,
 	            BackgroundPosition.CENTER,
 	            bSize)));
+		r.setFill(tc.getCurrent().getColor("bg"));
 	    
 		l.setFont(Font.font ("Courier", 40));
 		l.setTextFill(tc.getCurrent().getColor("txt"));

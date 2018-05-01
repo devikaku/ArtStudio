@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -37,6 +39,7 @@ public class UserController {
 	}
 
 	private void createMap() {
+		users.clear();
 		if (userslist == null) {
 			System.out.println("Users list null");
 			return;
@@ -96,32 +99,40 @@ public class UserController {
 		}
 		
 	}
-	public boolean LogIn(String username, String password) {
+	public String LogIn(String username, String password) {
 		//if user doesnt exist return false
-		if(users.get(username)==null) {
-			return false;
+		if(username.equals("") || username==null || password.equals("") || password==null) {
+			return "fillfields";
 		}
+		if(users.get(username)==null) {
+			return "incorrectusernameorpassword";
+		}
+		
 		//if user exists and password is incorrect return false
 		if(!users.get(username).getPassword().equals(password)) {
-			return false;
+			return "incorrectusernameorpassword";
 		}
 		loggedIn = true;
 		currentUser = users.get(username);
-		return true;
+		return "success";
 	}
-	public boolean SignUp(String username, String password, String rpassword) {
+	public String SignUp(String username, String password, String rpassword) {
 		//if passwords dont match return false
 		if(username.equals("") || username.equals(null) || password.equals("") || password.equals(null) || rpassword.equals("") || rpassword.equals(null)) {
-			return false;
+			return "fillfields";
 		}
 		if(!password.equals(rpassword)) {
-			return false;
+			return "passwordmatch";
 		}
 		//if user exists, retrun false
 		if(users.get(username)!=null) {
-			return false;
+			return "useralreadyexists";
 		}
-		return addUser(username, password);
+		if(addUser(username, password)) {
+			return "success";
+		}else {
+			return "unabletosignup";
+		}
 		
 	}
 
@@ -146,32 +157,49 @@ public class UserController {
 		loggedIn = false;
 	}
 
-	public boolean editUser(String username, String password, String rpassword) {
+	public String editUser(String username, String password, String rpassword) {
 		//if user enters something for username--aka they want to change username
-		if(username!=null && !username.equals("")) {
+String previous = currentUser.getUsername();
+		if((username==null || username.equals("")) && (password.equals("") || password==null) && (rpassword.equals("") || rpassword==null)) {
+			return "nochange";
+		}
+		if(username!=null && !username.equals("") && !username.equals(previous)) {
 			//if already exists, dont change anything
 			if(users.get(username)!=null) {
-				return false;
+				return "uexists";
 			}
 		}
 		//same for password
 		if(password!=null && !password.equals("")) {
 			//if passwords dont match, dont change anything
 			if(!password.equals(rpassword)) {
-				return false;
+				return "pnomatch";
 			}
 		}
+		boolean u = false;
+		boolean p = false;
+		boolean s = false;
 		if(username!=null && !username.equals("")) {
 			//if already exists, dont change anything
 			currentUser.setUsername(username);
+			u = true;
 		}
 		//same for password
 		if(password!=null && !password.equals("")) {
 			//if passwords dont match, dont change anything
 			currentUser.setPassword(password);
+			p = true;
 		}
 		try {
 		Gson gson = new Gson();
+		users.remove(previous);
+		users.put(currentUser.getUsername(), currentUser);
+		List<User> newlist = new ArrayList<User>();
+		for (Map.Entry<String, User> entry : users.entrySet())
+		{
+		    newlist.add(entry.getValue());
+		}
+		userslist.setUsers(newlist);
 		String userstojson = gson.toJson(userslist);
 			FileWriter fw;
 				fw = new FileWriter(JSON_FILE);
@@ -179,11 +207,23 @@ public class UserController {
 			System.out.println("File has been saved.");
 			System.out.println();
 			fw.close();
+			s = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return true;
+		if(s) {
+			if(p&&u) {
+				return "upchanged";
+			}
+			if(p) {
+				return "pchanged";
+			}
+			if(u) {
+				return "uchanged";
+			}
+		}
+		return "settingserror";
 	}
 
 }

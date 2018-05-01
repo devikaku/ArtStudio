@@ -99,12 +99,14 @@ public void setCurrentUser(User u) {
 	public void setLoggedIn(boolean loggedIn) {
 		uc.setLoggedIn(loggedIn);
 	}
-	public boolean LogIn(String username, String password) {
+	public String LogIn(String username, String password) {
 		//if user doesnt exist return false
 		return uc.LogIn(username, password);
 	}
-	public boolean SignUp(String username, String password, String rpassword) {
+	public String SignUp(String username, String password, String rpassword) {
 		//if passwords dont match return false
+		System.out.println(password);
+		System.out.println(rpassword);
 		return uc.SignUp(username, password, rpassword);
 	}
 	public Map<String, User> getUsers() {
@@ -145,7 +147,7 @@ public void setCurrentUser(User u) {
 			p.setComponentThemeStyle();
 		}
 	}
-	public boolean EditUser(String text, String text2, String text3) {
+	public String EditUser(String text, String text2, String text3) {
 		return uc.editUser(text, text2, text3);
 	}
 	public PaintingScene getP() {

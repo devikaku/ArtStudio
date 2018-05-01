@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -20,8 +21,10 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 //creating new log in page with instance variables
 public class Login {
@@ -38,6 +41,7 @@ public class Login {
 	TextField password;
 	Button go;
 	Button back;
+	Rectangle r;
 	/**
 	 * @param currentUser
 	 * @param pm
@@ -58,6 +62,21 @@ public class Login {
 		            BackgroundPosition.DEFAULT,
 		            bSize)));
 		scene = new Scene(b, 500, 300, Color.CORNSILK);
+		scene.setOnKeyPressed(e -> {
+		    if (e.getCode() == KeyCode.ENTER) {
+				String success = pm.LogIn(username.getText().toLowerCase(), password.getText());
+				if((success.equals("success"))) {
+					if(pm.getP()!=null) {
+						pm.getP().reset();
+					}
+					pm.launchPaint();
+				}else {
+					Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
+					alert.setTitle((pm.rb).getString("login"));
+					alert.showAndWait();
+				}
+		    }
+		});
 	}
 	//add log in buttons, such as fields for username, password, and back to home
 	private void loadView() {
@@ -82,18 +101,21 @@ public class Login {
 		g.add(p, 0, 1);
 		g.add(password, 1, 1);
 		g.setAlignment(Pos.CENTER);
+		g.setHgap(5);
+		g.setVgap(10);
 		
 		go = new Button("Log In");
 		go.setAccessibleHelp("button");
 		go.setOnAction(e->{
 			//check if valid
-			if(pm.LogIn(username.getText(), password.getText())) {
+			String success = pm.LogIn(username.getText().toLowerCase(), password.getText());
+			if(success.equals("success")) {
 				if(pm.getP()!=null) {
 					pm.getP().reset();
 				}
 				pm.launchPaint();
 			}else {
-				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("loginerror"), ButtonType.CLOSE);
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
 				alert.setTitle((pm.rb).getString("login"));
 				alert.showAndWait();
 			}
@@ -108,7 +130,12 @@ public class Login {
 
 		VBox v = new VBox();
 		v.getChildren().addAll(l, g, error, go, back);
-		b.setCenter(v);
+		StackPane s = new StackPane();
+		r = new Rectangle(400, 250);
+		r.setFill(tc.getCurrent().getColor("bg"));
+		r.setOpacity(0.8);
+		s.getChildren().addAll(r, v);
+		b.setCenter(s);
         b.setPadding(new Insets(10,50,50,50));
         v.setPadding(new Insets(20,20,20,30));
         v.setAlignment(Pos.CENTER);
@@ -173,6 +200,7 @@ public class Login {
 		
 		p.setTextFill(tc.getCurrent().getColor("btntxt"));
 		p.setFont(Font.font ("Courier", 15));
+		r.setFill(tc.getCurrent().getColor("bg"));
 		
 		username.setAccessibleHelp("username");
 		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ ";" + "-fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());

@@ -20,6 +20,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -28,8 +29,10 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import model.Theme;
 //create new signup page with instance variables, accessibility, 
@@ -52,6 +55,7 @@ public class Settings {
 	ThemeController tc;
 	ComboBox<String> themes;
 	Button english;
+	Rectangle r;
 	Button spanish;
 	/**
 	 * @param currentUser
@@ -65,6 +69,14 @@ public class Settings {
 		loadView();
 
 		scene = new Scene(b, 800, 400, Color.CORNSILK);
+		scene.setOnKeyPressed(e -> {
+		    if (e.getCode() == KeyCode.ENTER) {
+				String success = pm.EditUser(username.getText().toLowerCase(), password.getText(), rpassword.getText());
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
+				alert.setTitle((pm.rb).getString("settings"));
+				alert.showAndWait();
+		    }
+		});
 	}
 	//add log in buttons, such as fields for username, password, repeatpassword,and back to home
 	private void loadView() {
@@ -121,20 +133,16 @@ public class Settings {
 		g.add(ct, 0, 3);
 		g.add(themes, 1, 3);
 		g.setAlignment(Pos.CENTER);
-		
+		g.setHgap(5);
+		g.setVgap(10);
 		
 		go = new Button("Save Changes");
 		go.setOnAction(e->{
 			//check if valid
-			if(pm.EditUser(username.getText(), password.getText(), rpassword.getText())) {
-				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("settingssaved"), ButtonType.CLOSE);
+			String success = pm.EditUser(username.getText().toLowerCase(), password.getText(), rpassword.getText());
+				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
 				alert.setTitle((pm.rb).getString("settings"));
 				alert.showAndWait();
-			}else {
-				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString("settingsnotsaved"), ButtonType.CLOSE);
-				alert.setTitle((pm.rb).getString("settings"));
-				alert.showAndWait();
-			}
 		});
 		back = new Button("Back to Paint");
 		back.setOnAction(e->{
@@ -143,7 +151,12 @@ public class Settings {
 		back.setCenterShape(true);
 		VBox v = new VBox();
 		v.getChildren().addAll(l, g, h, go, back);
-		b.setCenter(v);
+		StackPane s = new StackPane();
+		r = new Rectangle(600, 300);
+		r.setFill(tc.getCurrent().getColor("bg"));
+		r.setOpacity(0.8);
+		s.getChildren().addAll(r, v);
+		b.setCenter(s);
         b.setPadding(new Insets(10,50,50,50));
         v.setPadding(new Insets(20,20,20,30));
         v.setAlignment(Pos.CENTER);
@@ -172,6 +185,7 @@ public class Settings {
 		username.setText("");
 		password.setText("");
 		rpassword.setText("");
+		themes.getSelectionModel().select(tc.getCurrent().getName());
 		
 	}
 	public void setComponentThemeStyle() {
@@ -229,6 +243,7 @@ public class Settings {
 		rpassword.setMaxHeight(40);
 		rpassword.setMaxWidth(300);
 		rpassword.setFont(Font.font ("Courier", 15));
+		r.setFill(tc.getCurrent().getColor("bg"));
 		
 		go.setAccessibleHelp("password");
 		go.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
@@ -255,7 +270,6 @@ public class Settings {
 		
 		go.setText((pm.rb).getString("save"));
 		back.setText((pm.rb).getString("backtopaint"));
-		
 		
 		username.setAccessibleText((pm.rb).getString("textfieldcusername"));
 		password.setAccessibleText((pm.rb).getString("textfieldcpassword"));

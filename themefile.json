@@ -36,7 +36,7 @@
 			"buttonTextColorHex": "#ffffff",
 			"secondaryColorHex": "#2A3954"
 		},
-				{
+		{
 			"name": "mountain",
 			"image": "mountain.jpg",
 			"bgColorHex": "#C280A4",
@@ -44,6 +44,25 @@
 			"textColorHex": "#ffffff",
 			"buttonTextColorHex": "#000000",
 			"secondaryColorHex": "#C9BFD6"
+		},
+		{
+			"name": "leaves",
+			"image": "leaves.jpg",
+			"bgColorHex": "#BFD39A",
+			"buttonColorHex": "#9AABBD",
+			"textColorHex": "#000000",
+			"buttonTextColorHex": "#ffffff",
+			"secondaryColorHex": "#DED1CD"
+		},
+		{
+			"name": "origami",
+			"image": "origami.jpg",
+			"bgColorHex": "#EBD5D9",
+			"buttonColorHex": "#67ACC4",
+			"textColorHex": "#242E78",
+			"buttonTextColorHex": "#ffffff",
+			"secondaryColorHex": "#9E598F"
 		}
+		
 	]
 }

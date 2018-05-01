@@ -19,8 +19,10 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
 //creating new home page
@@ -36,6 +38,7 @@ public class HomePage {
 	Button gen;
 	BorderPane b = new BorderPane();
 	ThemeController tc;
+	Rectangle r;
 	/**
 	 * @param currentUser
 	 * @param pm
@@ -103,7 +106,13 @@ public class HomePage {
 		h.setSpacing(5);
 		VBox v = new VBox(l, li, su, h, gen);
 		v.setSpacing(5);
-		b.setCenter(v);
+		
+		StackPane s = new StackPane();
+		r = new Rectangle(400, 250);
+		r.setFill(tc.getCurrent().getColor("bg"));
+		r.setOpacity(0.8);
+		s.getChildren().addAll(r, v);
+		b.setCenter(s);
         b.setPadding(new Insets(10,50,50,50));
         v.setPadding(new Insets(20,20,20,30));
         v.setAlignment(Pos.CENTER);
@@ -167,6 +176,7 @@ public class HomePage {
 		l.setFont(Font.font ("Courier", 40));
 		l.setTextFill(tc.getCurrent().getColor("txt"));
 		l.setAccessibleHelp("label");
+		r.setFill(tc.getCurrent().getColor("bg"));
 		 Image image1 = new Image(tc.getCurrent().getImage());
 
 		    BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
