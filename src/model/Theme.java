@@ -1,5 +1,10 @@
 package model;
 
+//THEME OBJECT-parsed in JSON
+//Devika Kumar
+//ITP 368, Spring 2018
+//Final Project
+//devikaku@usc.edu
 import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -11,27 +16,27 @@ public class Theme implements Serializable {
 	@SerializedName("name")
 	@Expose
 	private String name;
-	
+
 	@SerializedName("image")
 	@Expose
 	private String image;
-	
+
 	@SerializedName("bgColorHex")
 	@Expose
 	private String bgColorHex;
-	
+
 	@SerializedName("buttonColorHex")
 	@Expose
 	private String buttonColorHex;
-	
+
 	@SerializedName("textColorHex")
 	@Expose
 	private String textColorHex;
-	
+
 	@SerializedName("buttonTextColorHex")
 	@Expose
 	private String buttonTextColorHex;
-	
+
 	@SerializedName("secondaryColorHex")
 	@Expose
 	private String secondaryColorHex;
@@ -138,11 +143,11 @@ public class Theme implements Serializable {
 			return Color.web(buttonColorHex);
 		}
 		if (id.equals("btntxt")) {
-			System.out.println("button text"+Color.web(buttonTextColorHex).toString());
+			 
 			return Color.web(buttonTextColorHex);
 		}
 		if (id.equals("txt")) {
-			System.out.println("text"+Color.web(textColorHex).toString());
+			 
 			return Color.web(textColorHex);
 		}
 		if (id.equals("sec")) {

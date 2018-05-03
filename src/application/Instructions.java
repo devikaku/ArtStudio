@@ -1,8 +1,12 @@
 package application;
-
+//Instructions
+//Devika Kumar
+//ITP 368, Spring 2018
+//Final Project
+//devikaku@usc.edu
 import java.util.Map;
 
-import Controllers.PaintModelScene;
+import Controllers.SceneController;
 import Controllers.ThemeController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,106 +35,126 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import model.Theme;
-//create new signup page with instance variables, accessibility, 
+
+//Creates a new Intstructions page that gives the user instructions on how to use the app, as well as keyboard shortcuts
 public class Instructions {
-	private PaintModelScene pm;
+	// instance variables: I have a scenecontroller which is the scene manager,
+	// the scene associated with this class
+	private SceneController pm;
 	private Scene scene;
-	//error if signup fails
+
+	// everything is put into a borderpane, which contains a stackpane and a
+	// rectangle to overlay
 	BorderPane b = new BorderPane();
 	StackPane s = new StackPane();
 	Rectangle r;
+
+	// labels for title, instructions text, and back button
 	Label l;
 	Text t;
 	Button back;
+
+	// themecontroller sets theme
 	ThemeController tc;
-	
+
 	/**
 	 * @param currentUser
 	 * @param pm
 	 * @param scene
 	 */
-	public Instructions(PaintModelScene pm) {
-		//set current user and backgroun image, as well as accessibility
+	public Instructions(SceneController pm) {
+		// sets scenecontroller, themecontroller, loads all components, and sets
+		// background and creates the scene
 		this.pm = pm;
 		tc = pm.tc;
 		loadView();
 
 		scene = new Scene(b, 800, 400, Color.CORNSILK);
 	}
-	//add log in buttons, such as fields for username, password, repeatpassword,and back to home
+
+	// add all components
 	private void loadView() {
+		// add new label for title, instructionstext, and the rectangle to overlay
 		l = new Label("Instructions:");
-		
+
 		t = new Text("Click on the buttons to paint.efkefkerfkjenfkenrfjkenrjnfejnrfekrnfenrfejk ");
 		r = new Rectangle(500, 200);
 		s.getChildren().addAll(r, t);
 
+		// create button that calls method in scenecontroller that launches paint scene
 		back = new Button("Back to Paint");
-		back.setOnAction(e->{
+		back.setOnAction(e -> {
 			pm.launchPaint();
 		});
 		back.setCenterShape(true);
+
+		// sets all layouts and adds to borderpane
 		VBox v = new VBox();
 		v.getChildren().addAll(l, s, back);
 		b.setCenter(v);
-        b.setPadding(new Insets(10,50,50,50));
-        v.setPadding(new Insets(20,20,20,30));
-        v.setAlignment(Pos.CENTER);
-        v.setSpacing(5);
-        
-        setComponentThemeStyle();
+		b.setPadding(new Insets(10, 50, 50, 50));
+		v.setPadding(new Insets(20, 20, 20, 30));
+		v.setAlignment(Pos.CENTER);
+		v.setSpacing(5);
+
+		// set component styles based on theme and resets localization/accessibility
+		setComponentThemeStyle();
+		resetComponents();
 	}
-	//getters/setters
-	public PaintModelScene getPm() {
+
+	// getters/setters
+	public SceneController getPm() {
 		return pm;
 	}
-	public void setPm(PaintModelScene pm) {
+
+	public void setPm(SceneController pm) {
 		this.pm = pm;
 	}
+
 	public Scene getScene() {
 		return scene;
 	}
+
 	public void setScene(Scene scene) {
 		this.scene = scene;
 	}
+
+	// updates style of all components based on current theme
 	public void setComponentThemeStyle() {
-		 Image image1 = new Image(tc.getCurrent().getImage());
+		Image image1 = new Image(tc.getCurrent().getImage());
 
-		    BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
+		BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
 
-	    b.setBackground(new Background(new BackgroundImage(image1,
-	            BackgroundRepeat.REPEAT,
-	            BackgroundRepeat.REPEAT,
-	            BackgroundPosition.CENTER,
-	            bSize)));
-	    
-		l.setFont(Font.font ("Courier", 40));
+		b.setBackground(new Background(new BackgroundImage(image1, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+				BackgroundPosition.CENTER, bSize)));
+
+		l.setFont(Font.font("Courier", 40));
 		l.setTextFill(tc.getCurrent().getColor("txt"));
-		
+
 		t.setFill(tc.getCurrent().getColor("txt"));
-		t.setFont(Font.font ("Courier", 10));
-		
+		t.setFont(Font.font("Courier", 10));
+
 		r.setFill(tc.getCurrent().getColor("bg"));
-		
-		back.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
+
+		back.setStyle("-fx-background-color: " + tc.getCurrent().getButtonColorHex());
 		back.setMaxHeight(40);
 		back.setMaxWidth(100);
-		back.setFont(Font.font ("Courier", 10));
+		back.setFont(Font.font("Courier", 10));
 		back.setTextFill(tc.getCurrent().getColor("btntxt"));
 	}
+
+	// resets accessibility and localization
 	public void resetComponents() {
 
-		
 		l.setText((pm.rb).getString("instructions"));
 		t.setText((pm.rb).getString("instructionstext"));
 		back.setText((pm.rb).getString("backtopaint"));
 		l.setAccessibleText((pm.rb).getString("labelinstructions"));
 		t.setAccessibleText((pm.rb).getString("instructionstext"));
 		back.setAccessibleText((pm.rb).getString("buttonbacktopaint"));
-		
+
 		setComponentThemeStyle();
-		
-		
+
 	}
 
 }

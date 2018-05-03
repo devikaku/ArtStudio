@@ -1,8 +1,13 @@
 package application;
 
+//Settings
+//Devika Kumar
+//ITP 368, Spring 2018
+//Final Project
+//devikaku@usc.edu
 import java.util.Map;
 
-import Controllers.PaintModelScene;
+import Controllers.SceneController;
 import Controllers.ThemeController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,95 +40,145 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import model.Theme;
-//create new signup page with instance variables, accessibility, 
+
+//Creates new Settings Page that allows user to change user settings, theme, and language
 public class Settings {
-	private PaintModelScene pm;
+	// instance variables: I have a scenecontroller which is the scene manager,
+	// the scene associated with this class
+	private SceneController pm;
 	private Scene scene;
-	//error if signup fails
-	Label error = new Label("");
+	// borderpane acts as scene root, contains rectangle to overlay
+	Rectangle r;
 	BorderPane b = new BorderPane();
-	Label l;
+
+	// all components in Settings
+	Label l; // title
+	// labels for username, password, repeatpassword, changetheme
 	Label u;
 	Label p;
 	Label rp;
 	Label ct;
+
+	// textfields for receiving new info
 	TextField username;
 	TextField password;
 	TextField rpassword;
+
+	// button to save info
 	Button go;
+
+	// button to go back to paint scene
 	Button back;
+
+	// themecontroller sets style based on theme
 	ThemeController tc;
+
+	// combobox of all themes available
 	ComboBox<String> themes;
+
+	// language buttons
 	Button english;
-	Rectangle r;
 	Button spanish;
+
 	/**
 	 * @param currentUser
 	 * @param pm
 	 * @param scene
 	 */
-	public Settings(PaintModelScene pm) {
-		//set current user and backgroun image, as well as accessibility
+	public Settings(SceneController pm) {
+		// sets scenecontroller, themecontroller, loads all components, and sets
+		// background and creates the scene
 		this.pm = pm;
 		tc = pm.tc;
 		loadView();
 
 		scene = new Scene(b, 800, 400, Color.CORNSILK);
+
+		// KEYBOARD SHORTCUTS--press enter to attempt to save settings, throw alert if
+		// invalid
 		scene.setOnKeyPressed(e -> {
-		    if (e.getCode() == KeyCode.ENTER) {
+			if (e.getCode() == KeyCode.ENTER) {
 				String success = pm.EditUser(username.getText().toLowerCase(), password.getText(), rpassword.getText());
 				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
 				alert.setTitle((pm.rb).getString("settings"));
 				alert.showAndWait();
-		    }
+			}
 		});
 	}
-	//add log in buttons, such as fields for username, password, repeatpassword,and back to home
+
+	// add all components
 	private void loadView() {
 		l = new Label("Settings ");
 
 		username = new TextField();
 		password = new PasswordField();
 		rpassword = new PasswordField();
-		
+
+		// put all components in gridpane to format
 		GridPane g = new GridPane();
 		u = new Label("Change Username: ");
 
 		p = new Label("Change Password: ");
-		
+
 		rp = new Label("Repeat changed password: ");
-		
+
+		// create new combobox with all themes as strings
 		ct = new Label("Change theme: ");
 		themes = new ComboBox<String>();
 		for (Map.Entry<String, Theme> entry : tc.getThemes().entrySet()) {
 			themes.getItems().add(entry.getKey());
 		}
-				
-	   themes.valueProperty().addListener(new ChangeListener<String>() {
-	        @Override public void changed(ObservableValue ov, String t, String t1) {
-	            System.out.println(t1);
-	            tc.setCurrent(tc.getThemes().get(t1));
-	            pm.resetTheme();
-	        }    
-	    });
+
+		themes.valueProperty().addListener(new ChangeListener<String>() {
+			// sets current theme when new one is selected and updates all pages through
+			// scenecontroller
+			@Override
+			public void changed(ObservableValue ov, String t, String t1) {
+				 
+				tc.setCurrent(tc.getThemes().get(t1));
+				pm.resetTheme();
+			}
+		});
+
+		// creates language buttons and uses scenecontroller to reset language
+		// components of all pages
 		english = new Button((pm.rb).getString("english"));
 		english.setAccessibleHelp("button");
-		english.setOnAction(e->{
-			System.out.println("here");
+		english.setOnAction(e -> {
+			 
 			pm.setLanguage("english");
 			pm.resetLanguageComponents();
 		});
 		spanish = new Button((pm.rb).getString("spanish"));
 		spanish.setAccessibleHelp("button");
-		spanish.setOnAction(e->{
-			System.out.println("hereo");
+		spanish.setOnAction(e -> {
+			 
 			pm.setLanguage("spanish");
 			pm.resetLanguageComponents();
 		});
+
+		go = new Button("Save Changes");
+		go.setOnAction(e -> {
+			// check if valid--try to edit user through scenecontroller and receive a
+			// success message
+			// edits user if successful
+			String success = pm.EditUser(username.getText().toLowerCase(), password.getText(), rpassword.getText());
+			// creates alert updating user about status of changes
+			Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
+			alert.setTitle((pm.rb).getString("settings"));
+			alert.showAndWait();
+		});
+		// launches paint page
+		back = new Button("Back to Paint");
+		back.setOnAction(e -> {
+			pm.launchPaint();
+		});
+		back.setCenterShape(true);
+		// layout formatting--add all to borderpane
 		HBox h = new HBox(english, spanish);
 		h.setAlignment(Pos.CENTER);
 		h.setSpacing(5);
-		
+
 		g.add(u, 0, 0);
 		g.add(username, 1, 0);
 		g.add(p, 0, 1);
@@ -135,20 +190,6 @@ public class Settings {
 		g.setAlignment(Pos.CENTER);
 		g.setHgap(5);
 		g.setVgap(10);
-		
-		go = new Button("Save Changes");
-		go.setOnAction(e->{
-			//check if valid
-			String success = pm.EditUser(username.getText().toLowerCase(), password.getText(), rpassword.getText());
-				Alert alert = new Alert(AlertType.NONE, (pm.rb).getString(success), ButtonType.CLOSE);
-				alert.setTitle((pm.rb).getString("settings"));
-				alert.showAndWait();
-		});
-		back = new Button("Back to Paint");
-		back.setOnAction(e->{
-			pm.launchPaint();
-		});
-		back.setCenterShape(true);
 		VBox v = new VBox();
 		v.getChildren().addAll(l, g, h, go, back);
 		StackPane s = new StackPane();
@@ -157,109 +198,97 @@ public class Settings {
 		r.setOpacity(0.8);
 		s.getChildren().addAll(r, v);
 		b.setCenter(s);
-        b.setPadding(new Insets(10,50,50,50));
-        v.setPadding(new Insets(20,20,20,30));
-        v.setAlignment(Pos.CENTER);
-        v.setSpacing(5);
-        
-        setComponentThemeStyle();
+		b.setPadding(new Insets(10, 50, 50, 50));
+		v.setPadding(new Insets(20, 20, 20, 30));
+		v.setAlignment(Pos.CENTER);
+		v.setSpacing(5);
+
+		// sets style of components based on theme
+		setComponentThemeStyle();
 	}
-	//getters/setters
-	public PaintModelScene getPm() {
+
+	// getters/setters
+	public SceneController getPm() {
 		return pm;
 	}
-	public void setPm(PaintModelScene pm) {
+
+	public void setPm(SceneController pm) {
 		this.pm = pm;
 	}
+
 	public Scene getScene() {
 		return scene;
 	}
+
 	public void setScene(Scene scene) {
 		this.scene = scene;
 	}
-	public void resetError() {
-		error.setText("");
-	}
+
+	// resets all components
 	public void reset() {
-		resetError();
 		username.setText("");
 		password.setText("");
 		rpassword.setText("");
 		themes.getSelectionModel().select(tc.getCurrent().getName());
-		
+
+	} // set styles for buttons
+
+	public void setButtonStyle(Button b) {
+		b.setStyle("-fx-background-color: " + tc.getCurrent().getButtonColorHex());
+		b.setMaxHeight(40);
+		b.setMaxWidth(150);
+		b.setFont(Font.font("Courier", 10));
+		b.setTextFill(tc.getCurrent().getColor("btntxt"));
 	}
+
+	// sets style for labels
+	public void setLabelStyle(Label l) {
+		l.setTextFill(tc.getCurrent().getColor("btntxt"));
+		l.setFont(Font.font("Courier", 10));
+		l.setAccessibleHelp("label");
+	}
+
+	// set style for textfields
+	public void setTextFieldStyle(TextField t) {
+		t.setStyle("-fx-background-color: " + tc.getCurrent().getSecondaryColorHex() + "; -fx-text-fill: "
+				+ tc.getCurrent().getButtonTextColorHex());
+		t.setMaxHeight(40);
+		t.setMaxWidth(300);
+		t.setFont(Font.font("Courier", 15));
+	}
+
+	// resets background and style of labels, textfields, and buttons based on new
+	// theme
 	public void setComponentThemeStyle() {
-		 Image image1 = new Image(tc.getCurrent().getImage());
+		Image image1 = new Image(tc.getCurrent().getImage());
 
-		    BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
+		BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
 
-	    b.setBackground(new Background(new BackgroundImage(image1,
-	            BackgroundRepeat.REPEAT,
-	            BackgroundRepeat.REPEAT,
-	            BackgroundPosition.CENTER,
-	            bSize)));
-	    
-		l.setFont(Font.font ("Courier", 40));
+		b.setBackground(new Background(new BackgroundImage(image1, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+				BackgroundPosition.CENTER, bSize)));
+
+		l.setFont(Font.font("Courier", 40));
 		l.setTextFill(tc.getCurrent().getColor("txt"));
-		
-		u.setTextFill(tc.getCurrent().getColor("btntxt"));
-		u.setFont(Font.font ("Courier", 10));
-		
-		ct.setTextFill(tc.getCurrent().getColor("btntxt"));
-		ct.setFont(Font.font ("Courier", 10));
-		
-		p.setTextFill(tc.getCurrent().getColor("btntxt"));
-		p.setFont(Font.font ("Courier", 10));
-		
-		rp.setTextFill(tc.getCurrent().getColor("btntxt"));
-		rp.setFont(Font.font ("Courier", 10));
-		
-        english.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
-        english.setMaxHeight(40);
-        english.setMaxWidth(150);
-        english.setFont(Font.font ("Courier", 10));
-		english.setTextFill(tc.getCurrent().getColor("btntxt"));
-		
-        spanish.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
-        spanish.setMaxHeight(40);
-        spanish.setMaxWidth(150);
-        spanish.setFont(Font.font ("Courier", 10));
-		spanish.setTextFill(tc.getCurrent().getColor("btntxt"));
-		
+		setLabelStyle(u);
+		setLabelStyle(ct);
+		setLabelStyle(p);
+		setLabelStyle(rp);
+		setButtonStyle(english);
+		setButtonStyle(spanish);
+		setButtonStyle(go);
+		setButtonStyle(back);
 		username.setAccessibleHelp("username");
-		username.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
-		username.setMaxHeight(40);
-		username.setMaxWidth(300);
-		username.setFont(Font.font ("Courier", 15));
-		
+		setTextFieldStyle(username);
 		password.setAccessibleHelp("password");
-		password.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
-		password.setMaxHeight(40);
-		password.setMaxWidth(300);
-		password.setFont(Font.font ("Courier", 15));
-		
+		setTextFieldStyle(password);
 		rpassword.setAccessibleHelp("password");
-		rpassword.setStyle("-fx-background-color: "+tc.getCurrent().getSecondaryColorHex()+ "; -fx-text-fill: " + tc.getCurrent().getButtonTextColorHex());
-		rpassword.setMaxHeight(40);
-		rpassword.setMaxWidth(300);
-		rpassword.setFont(Font.font ("Courier", 15));
+		setTextFieldStyle(rpassword);
 		r.setFill(tc.getCurrent().getColor("bg"));
-		
-		go.setAccessibleHelp("password");
-		go.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
-		go.setMaxHeight(40);
-		go.setMaxWidth(100);
-		go.setFont(Font.font ("Courier", 10));
-		go.setTextFill(tc.getCurrent().getColor("btntxt"));
-		
-		back.setStyle("-fx-background-color: "+tc.getCurrent().getButtonColorHex());
-		back.setMaxHeight(40);
-		back.setMaxWidth(100);
-		back.setFont(Font.font ("Courier", 10));
-		back.setTextFill(tc.getCurrent().getColor("btntxt"));
-	}
-	public void resetComponents() {
 
+	}
+
+	// resets accessibility/localization
+	public void resetComponents() {
 		l.setText((pm.rb).getString("settings"));
 		u.setText((pm.rb).getString("changeusername"));
 		p.setText((pm.rb).getString("changepassword"));
@@ -267,22 +296,22 @@ public class Settings {
 		ct.setText((pm.rb).getString("changetheme"));
 		english.setText((pm.rb).getString("english"));
 		spanish.setText((pm.rb).getString("spanish"));
-		
+
 		go.setText((pm.rb).getString("save"));
 		back.setText((pm.rb).getString("backtopaint"));
-		
+
 		username.setAccessibleText((pm.rb).getString("textfieldcusername"));
 		password.setAccessibleText((pm.rb).getString("textfieldcpassword"));
 		rpassword.setAccessibleText((pm.rb).getString("textfieldcrpassword"));
 		l.setAccessibleText((pm.rb).getString("labelsettings"));
 		go.setAccessibleText((pm.rb).getString("buttonsave"));
 		back.setAccessibleText((pm.rb).getString("buttonbacktopaint"));
-		
+
 		ct.setAccessibleText((pm.rb).getString("buttonthemechange"));
 		english.setAccessibleText((pm.rb).getString("buttonenglish"));
 		spanish.setAccessibleText((pm.rb).getString("buttonspanish"));
 		setComponentThemeStyle();
-		
+
 	}
 
 }

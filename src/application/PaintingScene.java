@@ -1,5 +1,10 @@
 package application;
 
+//PAINT SCENE
+//Devika Kumar
+//ITP 368, Spring 2018
+//Final Project
+//devikaku@usc.edu
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -63,24 +68,34 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.Tool;
 
-//main painting scene
+//MAIN PAINTING SCENE
 public class PaintingScene {
-	// instance variables including current user, canvas class, colorpicker,
-	// paintbrush, toolsize, scene and paintingsceneclass
+	// instance variables:
+	// canvas for user to draw on
+	// graphicscontext object associated with canvas
+	// colorpicker associated with color of current toolController
+	// scenecontroller--scene manager
+	// current toolController that takes in our canvas and graphicscontext
+	// stampname that tells what is current shape stamp
+	// scene associated with class
+	// boolean that tells if stamp toolController is selected
+	// backgroundcolor--default to white
+	// borderpane--contains whole layout
+	// themecontroller-controls all theme changes
 	private Canvas canvas = new Canvas(800, 500);
 	private GraphicsContext g = canvas.getGraphicsContext2D();
 	private ColorPicker color = new ColorPicker();
-	private PaintModelScene pm;
-	private Tool tool = new Tool(canvas, g);
+	private SceneController pm;
+	private ToolController toolController = new ToolController(canvas, g);
 	String stampname = "";
-	ComboBox tools;
 	private Scene scene;
 	boolean stampselect = false;
 	private Color bgc = Color.WHITE;
 	BorderPane b = new BorderPane();
 	private ThemeController tc;
+
+	// LABELS/BUTTONS associated with tools
 	Label l;
 	Label l2;
 	Label ls;
@@ -90,7 +105,10 @@ public class PaintingScene {
 	Button paint;
 	Button pencil;
 	Button stamp;
+	// all stamp options
 	ComboBox<String> stamps = new ComboBox<String>();
+
+	// associated with save, clear, log out, settings, and instructions
 	Button by;
 	Button c;
 	Button d;
@@ -102,29 +120,41 @@ public class PaintingScene {
 	 * @param color
 	 * @param brush
 	 */
-	// constructor, intitialize paint functions
-	public PaintingScene(PaintModelScene pm) {
+	// sets scenecontroller, themecontroller, loads all components, and sets
+	// background and creates the scene
+	public PaintingScene(SceneController pm) {
 		this.pm = pm;
 		this.tc = pm.tc;
-		tool.setColor(color.getValue());
-		color.setOnAction(e -> {
-			tool.setColor(color.getValue());
-		});
-		g.setFill(bgc);
-		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+		// initializes all toolController settings and sets up canvas, loads all components
 		setUpCanvas();
 		loadView();
 		b.setCenter(canvas);
 		scene = new Scene(b, 1200, 600, Color.CORNSILK);
+
+		// KEYBOARD SHORTCUTS FOR SCENE:
 		scene.setOnKeyPressed(e -> {
+			// UP AND DOWN ARROWS ALLOW SLIDER VALUE/TOOLSIZE TO INCREMENT/DECREMENT AND
+			// UPDATE LABEL
 			if (e.getCode() == KeyCode.UP) {
 				if (slider.getValue() < 100) {
 					slider.requestFocus();
 					slider.increment();
-					l2.setText("Tool size: " + (int) slider.getValue());
-					tool.setToolSize((int) slider.getValue());
+					l2.setText("tool size: " + (int) slider.getValue());
+					toolController.setToolSize((int) slider.getValue());
 				}
 			}
+			if (e.getCode() == KeyCode.DOWN) {
+				 
+				if (slider.getValue() > 0) {
+					slider.requestFocus();
+					slider.decrement();
+					l2.setText("tool size: " + (int) slider.getValue());
+					toolController.setToolSize((int) slider.getValue());
+				}
+			}
+
+			// Q ALLOWS USER TO LOG OUT--SEE LOADVIEW FUNCTION FOR DETAILS
 			if (e.getCode() == KeyCode.Q) {
 				ButtonType logout = new ButtonType((pm.rb).getString("logout"), ButtonBar.ButtonData.OK_DONE);
 				ButtonType save = new ButtonType((pm.rb).getString("save"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -160,6 +190,8 @@ public class PaintingScene {
 					pm.logout();
 				}
 			}
+
+			// W ALLOWS USER TO SAVE, SEE LOADVIEW FUNCTION FOR DETAILS
 			if (e.getCode() == KeyCode.W) {
 
 				FileChooser fileChooser = new FileChooser();
@@ -183,26 +215,19 @@ public class PaintingScene {
 				}
 
 			}
-			if (e.getCode() == KeyCode.DOWN) {
-				System.out.println("down");
-				if (slider.getValue() > 0) {
-					slider.requestFocus();
-					slider.decrement();
-					l2.setText("Tool size: " + (int) slider.getValue());
-					tool.setToolSize((int) slider.getValue());
-				}
-			}
+			// SET KEYCODES TO SELECT CERTAIN TOOLS BASED ON FIRST LETTER OF WORD
+			// DIFFERENT IN SPANISH AND ENGLISH
 			if ((pm.rb).getLocale().getLanguage().equals("en")) {
 				if (e.getCode() == KeyCode.E) {
-					tool.setTool("eraser");
+					toolController.setTool("eraser");
 					setSelected(erase);
 				}
 				if (e.getCode() == KeyCode.P) {
-					tool.setTool("paintbrush");
+					toolController.setTool("paintbrush");
 					setSelected(paint);
 				}
 				if (e.getCode() == KeyCode.M) {
-					tool.setTool("pencil");
+					toolController.setTool("pencil");
 					setSelected(pencil);
 				}
 				if (e.getCode() == KeyCode.C) {
@@ -214,21 +239,21 @@ public class PaintingScene {
 					Optional<ButtonType> result = alert.showAndWait();
 
 					if (result.isPresent() && result.get() == clear) {
-						tool.clear();
+						toolController.clear();
 					}
 				}
 
 			} else if (((pm.rb).getLocale().getLanguage().equals("es"))) {
 				if (e.getCode() == KeyCode.B) {
-					tool.setTool("eraser");
+					toolController.setTool("eraser");
 					setSelected(erase);
 				}
 				if (e.getCode() == KeyCode.C) {
-					tool.setTool("paintbrush");
+					toolController.setTool("paintbrush");
 					setSelected(paint);
 				}
 				if (e.getCode() == KeyCode.R) {
-					tool.setTool("pencil");
+					toolController.setTool("pencil");
 					setSelected(pencil);
 				}
 				if (e.getCode() == KeyCode.L) {
@@ -240,7 +265,7 @@ public class PaintingScene {
 					Optional<ButtonType> result = alert.showAndWait();
 
 					if (result.isPresent() && result.get() == clear) {
-						tool.clear();
+						toolController.clear();
 					}
 				}
 
@@ -253,8 +278,11 @@ public class PaintingScene {
 	// instructions, etc.
 	public void loadView() {
 		VBox v = new VBox();
+		// sets labels for current color and toolController size
 		l = new Label("Current Color:");
-		l2 = new Label("Tool size:");
+		l2 = new Label("ToolController size:");
+
+		// slider associated with toolsize
 		slider = new Slider();
 		slider.setMin(1);
 		slider.setMax(100);
@@ -262,53 +290,64 @@ public class PaintingScene {
 		slider.setBlockIncrement(5);
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-				System.out.println(new_val.doubleValue());
-				l2.setText("Tool size: " + new_val.intValue());
-				tool.setToolSize(new_val.intValue());
+				 
+				// when slider changed, toolsize updates as does label
+				l2.setText("tool size: " + new_val.intValue());
+				toolController.setToolSize(new_val.intValue());
 			}
 		});
+		// initialize graphicscontext stroke
 		g.setLineWidth(slider.getValue());
 		l5 = new Label("Tools:");
 		ls = new Label("Current Stamp:");
+
+		// create eraser-onclick set the toolController to erase and change style
 		erase = new Button("Eraser");
 		erase.setPadding(new Insets(10, 10, 10, 10));
 		erase.setOnAction(e -> {
-			tool.setTool("eraser");
+			toolController.setTool("eraser");
 			setSelected(erase);
 		});
+		// create paint button-onclick set toolController to paint and change style
 		paint = new Button("Brush");
 		paint.setPadding(new Insets(10, 10, 10, 10));
 		paint.setOnAction(e -> {
-			tool.setTool("paintbrush");
+			toolController.setTool("paintbrush");
 			setSelected(paint);
 		});
 
+		// create marker button-onclick set toolController to pencil and change style
 		pencil = new Button("Marker");
 		pencil.setPadding(new Insets(10, 10, 10, 10));
 		pencil.setOnAction(e -> {
-			tool.setTool("pencil");
+			toolController.setTool("pencil");
 			setSelected(pencil);
 		});
+		// create stamp button-onclick set toolController to stamp and change style
 		stamp = new Button("Stamp");
 		stamp.setPadding(new Insets(10, 10, 10, 10));
 		stamp.setOnAction(e -> {
+			// shows we have selected stamp and updates toolController to selected stamp
 			stampselect = true;
-			tool.setTool(stampname);
+			toolController.setTool(stampname);
 			setSelected(stamp);
 		});
-		stamps.getItems().addAll("line", "rectangle", "oval");
+
+		// adds all stamp shapes to combobox and changes toolController when selected
+		stamps.getItems().addAll("line", "rectangle", "oval", "circle");
 		stamps.setFocusTraversable(false);
 		stamps.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue ov, String t, String t1) {
-				System.out.println(t1);
+				 
 				stampname = t1;
 				if (stampselect) {
-					tool.setTool(stampname);
+					toolController.setTool(stampname);
 				}
 				slider.requestFocus();
 			}
 		});
+		// clear--throws alert to user and allows them to confirm clear
 		clear = new Button("Clear");
 		clear.setPadding(new Insets(10, 10, 10, 10));
 		clear.setOnAction(e -> {
@@ -320,18 +359,17 @@ public class PaintingScene {
 			Optional<ButtonType> result = alert.showAndWait();
 
 			if (result.isPresent() && result.get() == clear) {
-				tool.clear();
+				toolController.clear();
 			}
 		});
-		// ComboBox cb = new ComboBox();
-		// cb.getItems().addAll("circle", "square", "line");
+
 		d = new Button("Save");
 		d.setPadding(new Insets(10, 10, 10, 10));
 
 		// got inspiration for saving image here:
 		// http://java-buddy.blogspot.com/2013/04/save-canvas-to-png-file.html
 		d.setOnAction(new EventHandler<ActionEvent>() {
-
+			// use filechooser object to save our canvas as an image
 			@Override
 			public void handle(ActionEvent t) {
 				FileChooser fileChooser = new FileChooser();
@@ -356,14 +394,19 @@ public class PaintingScene {
 			}
 
 		});
+		// formatting and add to borderpane
 		v.getChildren().addAll(l, color, ls, stamps, l2, slider, l5, erase, paint, pencil, stamp, clear, d);
 		v.setSpacing(5);
 		b.setLeft(v);
 		b.setCenter(canvas);
+		// create top title
 		b.setTop(drawRegion(pm.getCurrentUser().getUsername() + "'s Art Studio"));
 		VBox settingstuff = new VBox();
 		settingstuff.setSpacing(5);
 		by = new Button("Log Out");
+
+		// gives an option to cancel or save work before logging out, using the
+		// filechoose object above
 		by.setOnAction(e -> {
 			ButtonType logout = new ButtonType((pm.rb).getString("logout"), ButtonBar.ButtonData.OK_DONE);
 			ButtonType save = new ButtonType((pm.rb).getString("save"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -398,28 +441,34 @@ public class PaintingScene {
 				pm.logout();
 			}
 		});
+		// launch settings
 		c = new Button("My Settings");
 		c.setOnAction(e -> {
 			pm.launchSettings();
 		});
 
+		// launch instructions
 		e = new Button("Instructions");
 		e.setOnAction(e -> {
 			pm.launchInstructions();
 		});
+
+		// add all to borderpane, set default toolController, language, and style
 		settingstuff.getChildren().addAll(by, c, e);
 		b.setRight(settingstuff);
 		setComponentThemeStyle();
+		resetLanguageComponents();
 		setSelected(paint);
-		tool.setTool("paintbrush");
+		toolController.setTool("paintbrush");
 
 	}
 
+	// get scene
 	public Scene getScene() {
 		return scene;
 	}
 
-	// way to draw top region
+	// way to draw top region--contains username and title
 	private Region drawRegion(String myText) {
 		Text text = new Text(myText);
 		text.setFont(Font.font("Courier", FontWeight.BOLD, 20));
@@ -432,7 +481,9 @@ public class PaintingScene {
 		return stackPane;
 	}
 
+	// resets top panel title based on settings
 	public void resetComponents() {
+		if(pm.getCurrentUser()!=null) {
 		String s = "";
 		String u = pm.getCurrentUser().getUsername();
 		if (pm.rb.getLocale().getLanguage().equals("en")) {
@@ -441,23 +492,33 @@ public class PaintingScene {
 			s = "Studio de Arte de " + u;
 		}
 		b.setTop(drawRegion(s));
+		pm.primaryStage.setTitle(s);
+		}
 	}
 
 	public void setUpCanvas() {
+		// intializes toolController settings and connects our canvas/toolController with our mouse,
+		toolController.setColor(color.getValue());
+		color.setOnAction(e -> {
+			toolController.setColor(color.getValue());
+		});
+		g.setFill(bgc);
+		g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		canvas.setOnMouseDragged(e -> {
-			tool.drawDrag(e, bgc);
+			toolController.drawDrag(e, bgc);
 
 		});
 		canvas.setOnMouseReleased(e -> {
-			tool.drawRelease(e);
+			toolController.drawRelease(e);
 		});
 
 		canvas.setOnMousePressed(e -> {
-			tool.drawPress(e);
+			toolController.drawPress(e);
 		});
 
 	}
 
+	// sets styles of all components based on theme
 	public void setComponentThemeStyle() {
 		Image image1 = new Image(tc.getCurrent().getImage());
 
@@ -483,6 +544,7 @@ public class PaintingScene {
 		setButtonStyle(clear);
 	}
 
+	// set button style
 	public void setButtonStyle(Button b) {
 		b.setStyle("-fx-background-color: " + tc.getCurrent().getButtonColorHex());
 		b.setMaxHeight(40);
@@ -491,11 +553,13 @@ public class PaintingScene {
 		b.setTextFill(tc.getCurrent().getColor("btntxt"));
 	}
 
+	// set label style
 	public void setLabelStyle(Label l) {
 		l.setFont(Font.font("Courier", 15));
 		l.setTextFill(tc.getCurrent().getColor("txt"));
 	}
 
+	// resets canvas and other components
 	public void reset() {
 		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		g.setFill(bgc);
@@ -504,6 +568,7 @@ public class PaintingScene {
 		color.setValue(Color.WHITE);
 	}
 
+	// sets localization/accessibility
 	public void resetLanguageComponents() {
 		l.setText((pm.rb).getString("currentcolor"));
 		l2.setText((pm.rb).getString("toolsize"));
@@ -532,8 +597,10 @@ public class PaintingScene {
 		d.setAccessibleText((pm.rb).getString("save"));
 		e.setAccessibleText((pm.rb).getString("instructions"));
 		clear.setAccessibleText((pm.rb).getString("clear"));
+		resetComponents();
 	}
 
+	// sets style of selected button
 	public void setSelected(Button b) {
 		setButtonStyle(erase);
 		setButtonStyle(paint);
